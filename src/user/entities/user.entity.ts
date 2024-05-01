@@ -1,6 +1,6 @@
 import AbstractEntity from "src/core/database/abstract.entity";
 import { UserRole } from "../enums";
-import { Column, Entity } from "typeorm";
+import { Column, Entity, OneToOne } from "typeorm";
 
 @Entity('users')
 export class User extends AbstractEntity<User> {
@@ -24,4 +24,5 @@ export class User extends AbstractEntity<User> {
 
     @Column('boolean', { nullable: false, default: false })
     status: boolean;
+
 }
