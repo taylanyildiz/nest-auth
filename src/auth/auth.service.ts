@@ -3,7 +3,7 @@ import { JwtService } from "@nestjs/jwt";
 import { SignUpDTO } from "./dto";
 import { TransactionFactory, TransactionService } from "src/core/database/transaction";
 import { User } from "src/user/entities/user.entity";
-import { RegistrationCode } from "./entities";
+import { RegistrationCode, ResetCode } from "./entities";
 import { compareHash, generateCode } from "src/core/helpers/functions";
 
 @Injectable()
@@ -25,6 +25,7 @@ export class AuthService {
                 code,
             }));
             await transaction.commit();
+            // TODO: Send Email
             return { message: 'Registration Code Send' }
         } catch (error) {
             await transaction.rollback();
@@ -67,6 +68,7 @@ export class AuthService {
 
             const code = generateCode(6);
             await RegistrationCode.upsert({ user, email, code }, { conflictPaths: ['email'] });
+            // TODO: Send Email
             return { message: 'Registration Code Send' };
         } catch (error) {
             await transaction.rollback();
@@ -83,5 +85,46 @@ export class AuthService {
         return {
             data: { user, "access- token": token }
         };
+    }
+
+    public async forgotPassword(email: string): Promise<any> {
+        const user = await User.findOneBy({ email });
+        if (!user) throw new NotFoundException('User Not Found');
+        const code = generateCode(6)
+        await ResetCode.upsert({ user, email, code }, { conflictPaths: ['email'] });
+        // TODO: Send Email
+        return { message: 'Reset Code Send' };
+    }
+
+    public async checkResetCode(email: string, code: string): Promise<any> {
+        const user = await User.findOneBy({ email });
+        if (!user) throw new NotFoundException('User Not Found');
+
+        const resetCode = await ResetCode.findOneBy({ email, code });
+        if (!resetCode) throw new NotFoundException('Reset Code Not Found or Expired');
+        return { message: 'Code Compared Successfully' };
+    }
+
+    public async resetPassword(email: string, code: string, password: string): Promise<any> {
+        const transaction: TransactionFactory = await this.transactionService.createTransaction();
+        try {
+            const user = await User.findOneBy({ email });
+            if (!user) throw new NotFoundException('User Not Found');
+
+            const resetCode = await ResetCode.findOneBy({ email, code });
+            if (!resetCode) throw new NotFoundException('Reset Code Not Found or Expired');
+
+            user.status = true;
+            user.password = password;
+            await transaction.manager.save(user);
+            await transaction.manager.remove(resetCode);
+            await transaction.commit();
+            return { message: 'Password Reset Successfully' };
+        } catch (error) {
+            await transaction.rollback();
+            throw error;
+        } finally {
+            await transaction.release();
+        }
     }
 }

@@ -1,6 +1,6 @@
 import AbstractEntity from "src/core/database/abstract.entity";
 import { UserRole } from "../enums";
-import { BeforeInsert, Column, Entity, OneToOne } from "typeorm";
+import { AfterLoad, BeforeInsert, BeforeUpdate, Column, Entity, OneToOne } from "typeorm";
 import { setHash } from "src/core/helpers/functions";
 
 @Entity('users')
@@ -26,8 +26,20 @@ export class User extends AbstractEntity<User> {
     @Column('boolean', { nullable: false, default: false })
     status: boolean;
 
+    private templatePassword: string;
+    @AfterLoad()
+    private loadTemplatePassword(): void {
+        this.templatePassword = this.password;
+    }
+
     @BeforeInsert()
-    public async hashPassword(): Promise<void> {
+    private async hashPassword(): Promise<void> {
+        this.password = await setHash(this.password);
+    }
+
+    @BeforeUpdate()
+    private async updatePassword(): Promise<void> {
+        if (this.templatePassword == this.password) return;
         this.password = await setHash(this.password);
     }
 }
