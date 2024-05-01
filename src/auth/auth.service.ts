@@ -79,6 +79,9 @@ export class AuthService {
         if (!user.status) throw new ForbiddenException('User Not Activated');
         if (!await compareHash(password, user.password)) throw new ForbiddenException('Email or Password Wrong');
         user.password = null;
-        return { data: { user } };
+        const token = await this.jwtService.signAsync({ user });
+        return {
+            data: { user, "access- token": token }
+        };
     }
 }
