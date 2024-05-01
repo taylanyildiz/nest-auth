@@ -2,7 +2,7 @@ import { Body, Controller, ForbiddenException, Post, Query, UseGuards } from "@n
 import { AuthService } from "./auth.service";
 import { Public } from "src/core/decorators";
 import { SignUpGuard } from "./guards";
-import { ActivationDTO, SignUpDTO } from "./dto";
+import { ActivationDTO, SignInDTO, SignUpDTO } from "./dto";
 
 @Public()
 @Controller('auth')
@@ -18,5 +18,15 @@ export class AuthController {
     @Post('activation')
     public activation(@Query() query: ActivationDTO): any {
         return this.service.activation(query.email, query.code);
+    }
+
+    @Post('code')
+    public sendActivationCode(@Body('email') email: string): any {
+        return this.service.sendActivationCode(email);
+    }
+
+    @Post('sign-in')
+    public signIn(@Body() body: SignInDTO): any {
+        return this.service.signIn(body.email, body.password);
     }
 }
