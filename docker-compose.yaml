@@ -1,0 +1,12 @@
+services:
+  auth:
+    image: postgres
+    restart: always
+    ports:
+      - 5432:5432
+    volumes:
+      - auth:/var/lib/postgres/data
+    env_file:
+      - .env.development
+volumes:
+  auth:

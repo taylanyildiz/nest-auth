@@ -1,7 +1,7 @@
 import { BaseEntity, CreateDateColumn, DeleteDateColumn, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
 export default class AbstractEntity<T extends Object> extends BaseEntity {
-    constructor(args: Partial<T>) {
+    constructor(args?: Partial<T>) {
         super();
         Object.assign(this, args);
     }

@@ -21,6 +21,7 @@ declare global {
  */
 export const expressExtInit = (req: Request, res: Response, next: NextFunction) => {
     req.accessToken = extractTokenFromHeader(req);
+    next();
 }
 
 

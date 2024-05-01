@@ -22,6 +22,6 @@ export class User extends AbstractEntity<User> {
     @Column('text', { nullable: false })
     password: string;
 
-    @Column('enum', { nullable: false, default: false })
+    @Column('boolean', { nullable: false, default: false })
     status: boolean;
 }

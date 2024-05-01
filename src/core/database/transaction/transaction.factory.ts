@@ -1,7 +1,7 @@
-import { DataSource, EntityManager, QueryRunner } from "typeorm";
+import { EntityManager, QueryRunner } from "typeorm";
 import ITransacion from "./transaction.interface";
 
-export default class TransactionFactory implements ITransacion {
+export class TransactionFactory implements ITransacion {
     constructor(private readonly runner: QueryRunner) { }
 
 

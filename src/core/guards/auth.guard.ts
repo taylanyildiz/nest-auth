@@ -33,7 +33,7 @@ class AuthGuard implements CanActivate {
 }
 
 
-export const AuthAppGuard: Provider = {
+export const AuthGuardProvider: Provider = {
     provide: APP_GUARD,
     useClass: AuthGuard,
 };
