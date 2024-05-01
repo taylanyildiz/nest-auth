@@ -8,6 +8,6 @@ async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
   app.use(expressExtInit);
   app.enableVersioning(apiOptions)
-  await app.listen(3000);
+  await app.listen(80);
 }
 bootstrap();
