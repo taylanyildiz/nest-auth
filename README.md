@@ -6,3 +6,4 @@
   - __POSTGRES__
   - __JWT__
   - __DOCKER__
+  - __SWAGGER__
