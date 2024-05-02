@@ -44,5 +44,4 @@ export class AuthController {
     public resetPassword(@Body() body: ResetPasswordDTO): any {
         return this.service.resetPassword(body.email, body.code, body.password);
     }
-
 }
