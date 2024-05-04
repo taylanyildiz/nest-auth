@@ -10,11 +10,12 @@ class HttpExceptionFilter implements ExceptionFilter {
         const status: number = exception.getStatus();
         const message: string = exception.message;
 
-        res.status(status).json({
+        const response = {
             statusCode: status,
             timestamp: new Date().toISOString(),
             message,
-        })
+        };
+        res.status(status).json(response)
     }
 }
 

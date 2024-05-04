@@ -1,9 +1,11 @@
-import { Body, Controller, ForbiddenException, Post, Put, Query, UseGuards } from "@nestjs/common";
+import { Body, Controller, HttpCode, Post, Put, Query, UseGuards } from "@nestjs/common";
 import { AuthService } from "./auth.service";
 import { Public } from "src/core/decorators";
 import { SignUpGuard } from "./guards";
 import { ActivationDTO, ResetCodeDTO, ResetPasswordDTO, SignInDTO, SignUpDTO } from "./dto";
+import { ApiTags } from "@nestjs/swagger";
 
+@ApiTags('auth')
 @Public()
 @Controller('auth')
 export class AuthController {
@@ -16,16 +18,18 @@ export class AuthController {
     }
 
     @Post('activation')
+    @HttpCode(200)
     public activation(@Query() query: ActivationDTO): any {
         return this.service.activation(query.email, query.code);
     }
 
-    @Post('code')
+    @Post('activation-code')
     public sendActivationCode(@Body('email') email: string): any {
         return this.service.sendActivationCode(email);
     }
 
     @Post('sign-in')
+    @HttpCode(200)
     public signIn(@Body() body: SignInDTO): any {
         return this.service.signIn(body.email, body.password);
     }

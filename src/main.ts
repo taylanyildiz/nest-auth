@@ -3,11 +3,21 @@ import { AppModule } from './app.module';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { expressExtInit } from './core/extensions/express.extension';
 import { apiOptions } from './core/configs';
+import { SwaggerHelper } from './core/helpers/swagger.helper';
+import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
-  const app = await NestFactory.create<NestExpressApplication>(AppModule);
-  app.use(expressExtInit);
+  const app: NestExpressApplication = await NestFactory.create<NestExpressApplication>(AppModule, {
+    cors: {
+      origin: true,
+      methods: 'GET,PUT,POST,DELETE,PATCH,HEAD',
+      credentials: true,
+    }
+  });
   app.enableVersioning(apiOptions)
-  await app.listen(80);
+  app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }))
+  app.use(expressExtInit);
+  new SwaggerHelper(app);
+  app.listen(80);
 }
 bootstrap();
